@@ -1,15 +1,14 @@
-package co.com.sofka.calendar.services;
+package co.com.sofka.calendar.services.impl;
 
 import co.com.sofka.calendar.collections.Program;
 import co.com.sofka.calendar.model.ProgramDate;
 import co.com.sofka.calendar.repositories.ProgramRepository;
+import co.com.sofka.calendar.services.ISchedulerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
 import java.time.LocalDate;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
@@ -17,19 +16,17 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 @Service
-public class SchedulerService {
+public class SchedulerService implements ISchedulerService {
 
     @Autowired
     private ProgramRepository programRepository;
 
-    //TODO: deben retornar un flux de programDate Flux<ProgramDate>
+    @Override
     public Flux<ProgramDate> generateCalendar(String programId, LocalDate startDate) {
         var endDate = new AtomicReference<>(LocalDate.from(startDate));
         final AtomicInteger[] pivot = {new AtomicInteger()};
         final int[] index = {0};
 
-        //TODO: debe pasarlo a reactivo, no puede trabaja elementos bloqueantes
-        //TODO: trabajar el map reactivo y no deben colectar
         var program = programRepository.findById(programId);
         var result = program
                 .flatMapMany(programa -> Flux.fromStream(getDurationOf(programa)))

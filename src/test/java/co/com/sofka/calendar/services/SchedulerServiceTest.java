@@ -5,8 +5,7 @@ import co.com.sofka.calendar.collections.Program;
 import co.com.sofka.calendar.collections.Time;
 import co.com.sofka.calendar.model.ProgramDate;
 import co.com.sofka.calendar.repositories.ProgramRepository;
-import com.google.gson.Gson;
-import org.junit.jupiter.api.Assertions;
+import co.com.sofka.calendar.services.impl.SchedulerService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -30,9 +29,7 @@ class SchedulerServiceTest {
     @Mock
     ProgramRepository repository;
 
-
     @Test
-        //TODO: modificar el test para que el act sea reactivo, usando stepverifier
     void generateCalendar() {
         var programId = "xxxx";
         var startDate = LocalDate.of(2022, 1, 1);
@@ -41,7 +38,6 @@ class SchedulerServiceTest {
 
         Mockito.when(repository.findById(programId)).thenReturn(Mono.just(program));
 
-        //TODO: hacer una subscripción de el servicio reactivo
         Flux<ProgramDate> response = schedulerService.generateCalendar(programId, startDate);
         Mockito.verify(repository).findById(programId);
 
@@ -70,7 +66,6 @@ class SchedulerServiceTest {
                             && programDate.getCategoryName().equals("Fundamentos");
                 })
                 .verifyComplete();
-
     }
 
     @Test
@@ -86,7 +81,6 @@ class SchedulerServiceTest {
                 .verify();
 
         Mockito.verify(repository).findById(programId);
-
     }
 
     //no tocar
